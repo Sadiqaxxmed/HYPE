@@ -1,6 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const outfitsRoute = require('./routes/outfit');
+const outfitPieceRoute = require('./routes/outfitpiece');
+const reviewRoute = require('./routes/review');
 
 const app = express();
 const port = 3000;
@@ -10,6 +12,9 @@ app.use(express.json());
 
 // Use the routes
 app.use('/outfits', outfitsRoute);
+app.use('/outfitPieces', outfitPieceRoute);
+app.use('/reviews', reviewRoute);
+
 
 // Connect to MongoDB
 mongoose.connect('mongodb+srv://offsznahmed:Offszn25!@cluster0.rz5qp.mongodb.net/', {

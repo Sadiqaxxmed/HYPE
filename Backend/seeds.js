@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const User = require('./models/user');
 const Outfit = require('./models/outfit');
 const OutfitPiece = require('./models/outfitpiece');
-const OutfitPieceLink = require('./models/outfitpiecelink');
 const Review = require('./models/review');
 
 mongoose.connect('mongodb+srv://offsznahmed:Offszn25!@cluster0.rz5qp.mongodb.net/', {
@@ -19,7 +18,6 @@ db.once('open', async () => {
     await User.deleteMany({});
     await Outfit.deleteMany({});
     await OutfitPiece.deleteMany({});
-    await OutfitPieceLink.deleteMany({});
     await Review.deleteMany({});
     
     // Creating test users
@@ -55,13 +53,13 @@ db.once('open', async () => {
         description: 'Coooozzy fit fr! 😴',
     });
 
-
     await outfit1.save();
     await outfit2.save();
 
     // Create some outfit pieces
     const piece1 = new OutfitPiece({
         user_id: user1._id,
+        outfit_id: outfit1._id,
         brand_name: 'Shirts In Style',
         piece_name: 'Casual Overcoat',
         image: 'https://tinyurl.com/5n9xy2wf',
@@ -71,6 +69,7 @@ db.once('open', async () => {
 
     const piece2 = new OutfitPiece({
         user_id: user1._id,
+        outfit_id: outfit1._id,
         brand_name: 'Mnml',
         piece_name: 'Military Cargo Pants',
         image: 'https://tinyurl.com/5n7sm7xx',
@@ -80,6 +79,7 @@ db.once('open', async () => {
 
     const piece3 = new OutfitPiece({
         user_id: user1._id,
+        outfit_id: outfit1._id,
         brand_name: 'Nike',
         piece_name: 'Nike Air Force 1',
         image: 'https://tinyurl.com/3m4vd2uj',
@@ -89,6 +89,7 @@ db.once('open', async () => {
 
     const piece4 = new OutfitPiece({
         user_id: user2._id,
+        outfit_id: outfit2._id,
         brand_name: 'PRIMO',
         piece_name: 'Regular fit Basic Hoodie',
         image: 'https://tinyurl.com/y8me4czc',
@@ -98,6 +99,7 @@ db.once('open', async () => {
 
     const piece5 = new OutfitPiece({
         user_id: user2._id,
+        outfit_id: outfit2._id,
         brand_name: 'A&F',
         piece_name: 'Trend Rigid Denim',
         image: 'https://tinyurl.com/3y92h7ny',
@@ -107,13 +109,13 @@ db.once('open', async () => {
 
     const piece6 = new OutfitPiece({
         user_id: user2._id,
+        outfit_id: outfit2._id,
         brand_name: 'Timberland',
         piece_name: 'Classic Boot',
         image: 'https://tinyurl.com/2rejkr46',
         price: '$159.99',
         link: 'https://tinyurl.com/3k3eeznc',
     });
-
 
     await piece1.save();
     await piece2.save();
@@ -122,44 +124,12 @@ db.once('open', async () => {
     await piece5.save();
     await piece6.save();
 
-    // Link pieces to outfits
-    const outfitPieceLink1 = new OutfitPieceLink({
-        outfit_id: outfit1._id,
-        piece_id: piece1._id,
-    });
+    // Update outfits with the pieces
+    outfit1.pieces = [piece1._id, piece2._id, piece3._id];
+    outfit2.pieces = [piece4._id, piece5._id, piece6._id];
 
-    const outfitPieceLink2 = new OutfitPieceLink({
-        outfit_id: outfit1._id,
-        piece_id: piece2._id,
-    });
-
-    const outfitPieceLink3 = new OutfitPieceLink({
-        outfit_id: outfit1._id,
-        piece_id: piece3._id,
-    });
-
-    const outfitPieceLink4 = new OutfitPieceLink({
-        outfit_id: outfit2._id,
-        piece_id: piece4._id,
-    });
-
-    const outfitPieceLink5 = new OutfitPieceLink({
-        outfit_id: outfit2._id,
-        piece_id: piece5._id,
-    });
-
-    const outfitPieceLink6 = new OutfitPieceLink({
-        outfit_id: outfit2._id,
-        piece_id: piece6._id,
-    });
-
-
-    await outfitPieceLink1.save();
-    await outfitPieceLink2.save();
-    await outfitPieceLink3.save();
-    await outfitPieceLink4.save();
-    await outfitPieceLink5.save();
-    await outfitPieceLink6.save();
+    await outfit1.save();
+    await outfit2.save();
 
     // Create some reviews
     const review1 = new Review({

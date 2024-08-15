@@ -1,65 +1,66 @@
 const express = require('express');
 const router = express.Router();
-const Outfit = require('../models/outfit');
-
-// Create a new outfit
-router.post('/', async (req, res) => {
-  try {
-    const newOutfit = new Outfit(req.body);
-    await newOutfit.save();
-    res.status(201).send(newOutfit);
-  } catch (error) {
-    res.status(400).send(error);
-  }
-});
+const Outfit = require('./models/Outfit');
+const OutfitPiece = require('./models/OutfitPiece');
 
 // Get all outfits
 router.get('/', async (req, res) => {
-  try {
-    const outfits = await Outfit.find();
-    res.send(outfits);
-  } catch (error) {
-    res.status(500).send(error);
-  }
+  const outfits = await Outfit.find();
+  res.send(outfits);
 });
 
 // Get a single outfit by ID
 router.get('/:id', async (req, res) => {
-  try {
-    const outfit = await Outfit.findById(req.params.id);
-    if (!outfit) {
-      return res.status(404).send();
-    }
-    res.send(outfit);
-  } catch (error) {
-    res.status(500).send(error);
+  const outfit = await Outfit.findById(req.params.id);
+  if (!outfit) {
+    return res.status(404).send();
   }
+  res.send(outfit);
+});
+
+// Create a new outfit and its pieces
+router.post('/newOutfit', async (req, res) => {
+  const { user_id, images, description, pieces } = req.body;
+
+  // Create the outfit first
+  const newOutfit = new Outfit({ user_id, images, description });
+  await newOutfit.save();
+
+  // Create each outfit piece and link it to the outfit
+  const outfitPieceIds = [];
+  for (const piece of pieces) {
+    const newPiece = new OutfitPiece({
+      user_id,
+      outfit_id: newOutfit._id, // Link the piece to the outfit
+      ...piece,
+    });
+    await newPiece.save();
+    outfitPieceIds.push(newPiece._id);
+  }
+
+  // Update the outfit with the pieces
+  newOutfit.pieces = outfitPieceIds;
+  await newOutfit.save();
+
+  res.status(201).send(newOutfit);
 });
 
 // Update an outfit by ID
-router.patch('/:id', async (req, res) => {
-  try {
-    const outfit = await Outfit.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
-    if (!outfit) {
-      return res.status(404).send();
-    }
-    res.send(outfit);
-  } catch (error) {
-    res.status(400).send(error);
+router.patch('/updateOutfit/:id', async (req, res) => {
+  const outfit = await Outfit.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+  if (!outfit) {
+    return res.status(404).send();
   }
+  res.send(outfit);
 });
 
 // Delete an outfit by ID
-router.delete('/:id', async (req, res) => {
-  try {
-    const outfit = await Outfit.findByIdAndDelete(req.params.id);
-    if (!outfit) {
-      return res.status(404).send();
-    }
-    res.send(outfit);
-  } catch (error) {
-    res.status(500).send(error);
+router.delete('/deleteOutfit/:id', async (req, res) => {
+  const outfit = await Outfit.findByIdAndDelete(req.params.id);
+  if (!outfit) {
+    return res.status(404).send();
   }
+  res.send(outfit);
 });
 
 module.exports = router;
