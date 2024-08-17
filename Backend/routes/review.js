@@ -1,15 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const Review = require('./models/Review');
+const authenticateJWT = require('../middleware/auth');
 
 // Get all reviews
-router.get('/', async (req, res) => {
+router.get('/', authenticateJWT, async (req, res) => {
     const reviews = await Review.find();
     res.send(reviews);
 });
-  
+
 // Get a single review by ID
-router.get('/:id', async (req, res) => {
+router.get('/:id', authenticateJWT, async (req, res) => {
     const review = await Review.findById(req.params.id);
     if (!review) {
         return res.status(404).send();
@@ -17,14 +18,14 @@ router.get('/:id', async (req, res) => {
     res.send(review);
 });
 // Create a new review
-router.post('/', async (req, res) => {
+router.post('/', authenticateJWT, async (req, res) => {
     const newReview = new Review(req.body);
     await newReview.save();
     res.status(201).send(newReview);
 });
 
 // Update a review by ID
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', authenticateJWT, async (req, res) => {
     const review = await Review.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     if (!review) {
         return res.status(404).send();
@@ -33,7 +34,7 @@ router.patch('/:id', async (req, res) => {
 });
 
 // Delete a review by ID
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticateJWT, async (req, res) => {
     const review = await Review.findByIdAndDelete(req.params.id);
     if (!review) {
         return res.status(404).send();

@@ -2,15 +2,16 @@ const express = require('express');
 const router = express.Router();
 const Outfit = require('./models/Outfit');
 const OutfitPiece = require('./models/OutfitPiece');
+const authenticateJWT = require('../middleware/auth');
 
 // Get all outfits
-router.get('/', async (req, res) => {
+router.get('/', authenticateJWT, async (req, res) => {
   const outfits = await Outfit.find();
   res.send(outfits);
 });
 
 // Get a single outfit by ID
-router.get('/:id', async (req, res) => {
+router.get('/:id', authenticateJWT, async (req, res) => {
   const outfit = await Outfit.findById(req.params.id);
   if (!outfit) {
     return res.status(404).send();
@@ -19,7 +20,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Create a new outfit and its pieces
-router.post('/newOutfit', async (req, res) => {
+router.post('/newOutfit', authenticateJWT, async (req, res) => {
   const { user_id, images, description, pieces } = req.body;
 
   // Create the outfit first
@@ -46,7 +47,7 @@ router.post('/newOutfit', async (req, res) => {
 });
 
 // Update an outfit by ID
-router.patch('/updateOutfit/:id', async (req, res) => {
+router.patch('/updateOutfit/:id', authenticateJWT, async (req, res) => {
   const outfit = await Outfit.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
   if (!outfit) {
     return res.status(404).send();
@@ -55,7 +56,7 @@ router.patch('/updateOutfit/:id', async (req, res) => {
 });
 
 // Delete an outfit by ID
-router.delete('/deleteOutfit/:id', async (req, res) => {
+router.delete('/deleteOutfit/:id', authenticateJWT, async (req, res) => {
   const outfit = await Outfit.findByIdAndDelete(req.params.id);
   if (!outfit) {
     return res.status(404).send();
