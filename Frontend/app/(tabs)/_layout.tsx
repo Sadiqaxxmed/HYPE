@@ -1,5 +1,8 @@
 import React from 'react';
+import { StatusBar } from 'expo-status-bar';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { FontAwesome5 } from '@expo/vector-icons'; // Import FontAwesome5
+import { Ionicons } from '@expo/vector-icons';
 import { Link, Tabs } from 'expo-router';
 import { Pressable } from 'react-native';
 
@@ -16,42 +19,33 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const colorScheme = 'dark';
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        // Disable the static render of the header on web
-        // to prevent a hydration error in React Navigation v6.
+        tabBarActiveTintColor: Colors[colorScheme ?? 'dark'].tint,
         headerShown: useClientOnlyValue(false, true),
+        tabBarShowLabel: false, 
       }}>
       <Tabs.Screen
-        name="index"
+        name="feed"
         options={{
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="info-circle"
-                    size={25}
-                    color={Colors[colorScheme ?? 'light'].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          ),
+          title: '',
+          headerStyle: {
+            backgroundColor: '#000',
+          },
+          tabBarIcon: ({ color }) => <Ionicons name="home-outline" size={25} color={color} />,
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="profile"
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: '',
+          headerStyle: {
+            backgroundColor: '#000',
+          },
+          tabBarIcon: ({ color }) => <Ionicons name="person-outline" size={25} color={color} />,
         }}
       />
     </Tabs>
