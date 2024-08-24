@@ -1,33 +1,24 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { FontAwesome5 } from '@expo/vector-icons'; // Import FontAwesome5
 import { Ionicons } from '@expo/vector-icons';
-import { Link, Tabs } from 'expo-router';
-import { Pressable } from 'react-native';
+import { Tabs } from 'expo-router';
 
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>['name'];
-  color: string;
-}) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
-}
-
 export default function TabLayout() {
-  const colorScheme = 'dark';
+  const colorScheme = useColorScheme();
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'dark'].tint,
+        tabBarActiveTintColor: Colors[colorScheme ?? 'dark'].tabIconSelected,
+        tabBarInactiveTintColor: Colors[colorScheme ?? 'dark'].tabIconDefault,
         headerShown: useClientOnlyValue(false, true),
-        tabBarShowLabel: false, 
-      }}>
+        tabBarShowLabel: false,
+      }}
+    >
       <Tabs.Screen
         name="feed"
         options={{
@@ -35,7 +26,45 @@ export default function TabLayout() {
           headerStyle: {
             backgroundColor: '#000',
           },
-          tabBarIcon: ({ color }) => <Ionicons name="home-outline" size={25} color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name="home-outline"
+              size={25}
+              color={focused ? Colors[colorScheme ?? 'dark'].tabIconSelected : Colors[colorScheme ?? 'dark'].tabIconDefault}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="explore"
+        options={{
+          title: '',
+          headerStyle: {
+            backgroundColor: '#000',
+          },
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name="flash-outline"
+              size={25}
+              color={focused ? Colors[colorScheme ?? 'dark'].tabIconSelected : Colors[colorScheme ?? 'dark'].tabIconDefault}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="upload"
+        options={{
+          title: '',
+          headerStyle: {
+            backgroundColor: '#000',
+          },
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name="duplicate-outline"
+              size={25}
+              color={focused ? Colors[colorScheme ?? 'dark'].tabIconSelected : Colors[colorScheme ?? 'dark'].tabIconDefault}
+            />
+          ),
         }}
       />
       <Tabs.Screen
@@ -45,7 +74,13 @@ export default function TabLayout() {
           headerStyle: {
             backgroundColor: '#000',
           },
-          tabBarIcon: ({ color }) => <Ionicons name="person-outline" size={25} color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name="person-outline"
+              size={25}
+              color={focused ? Colors[colorScheme ?? 'dark'].tabIconSelected : Colors[colorScheme ?? 'dark'].tabIconDefault}
+            />
+          ),
         }}
       />
     </Tabs>
