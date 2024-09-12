@@ -10,10 +10,10 @@ import { useColorScheme } from '@/components/useColorScheme';
 import { ActivityIndicator, StatusBar, View, Text } from 'react-native';
 import Colors from '@/constants/Colors';
 
-export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
-} from 'expo-router';
+// export {
+//   // Catch any errors thrown by the Layout component.
+//   ErrorBoundary,
+// } from 'expo-router';
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
@@ -82,7 +82,10 @@ function RootLayoutNav() {
             <Text style={{ color: Colors.customRed.tint, fontSize: 30, fontFamily: 'Pacifico'}}> Hype </Text>
           </View>
         ) : (
-          stackScreens
+          // stackScreens
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          </Stack>
         )}
       </ThemeProvider>
     );
