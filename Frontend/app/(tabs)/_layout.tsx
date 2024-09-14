@@ -23,7 +23,9 @@ export default function TabLayout() {
         name="feed"
         options={{
           title: '',
+          // headerShown: false,
           headerStyle: {
+            height: '6%',
             backgroundColor: '#000',
           },
           tabBarIcon: ({ color, focused }) => (
