@@ -9,6 +9,7 @@ passport.use(new LocalStrategy({
   usernameField: 'email', // Can be 'username' if you prefer to use username instead of email
   passwordField: 'password'
 }, async (email, password, done) => {
+  console.log('Attempting login with:', email);
   try {
     const user = await User.findOne({ email });
     if (!user) {
@@ -16,6 +17,10 @@ passport.use(new LocalStrategy({
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
+    console.log('Email:', email);
+    console.log('Password:', password);
+    console.log('User from DB:', user);
+    console.log('Password match:', isMatch);
     if (!isMatch) {
       return done(null, false, { message: 'Incorrect password.' });
     }

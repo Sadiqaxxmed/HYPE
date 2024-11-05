@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const OutfitPiece = require('./models/OutfitPiece');
+const OutfitPiece = require('../models/outfitPiece');
 const authenticateJWT = require('../middleware/auth');
 
 // Get all outfit pieces

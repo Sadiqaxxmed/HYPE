@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-const User = require('./models/user');
-const Outfit = require('./models/outfit');
-const OutfitPiece = require('./models/outfitpiece');
+const User = require('../models/user');
+const Outfit = require('../models/outfit');
+const OutfitPiece = require('../models/outfitpiece');
 const Review = require('./models/review');
 
 mongoose.connect('mongodb+srv://offsznahmed:Offszn25!@cluster0.rz5qp.mongodb.net/', {

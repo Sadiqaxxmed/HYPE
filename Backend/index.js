@@ -1,8 +1,11 @@
 const express = require('express');
 const mongoose = require('mongoose');
+require('dotenv').config(); 
+const session = require('express-session');
+
+require('./config/passport'); // Make sure to require the passport config
 const passport = require('passport');
 const cookieParser = require('cookie-parser');
-require('dotenv').config(); 
 
 
 const authRoute = require('./routes/auth')
@@ -16,7 +19,21 @@ const port = 3000;
 // Middleware
 app.use(express.json());
 
+// Session middleware
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'your_secret_key', // Replace with your own secret
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } // Set to true if using HTTPS
+}));
+
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+
 // Use the routes
+app.use('/auth', authRoute)
 app.use('/outfits', outfitsRoute);
 app.use('/outfitPieces', outfitPieceRoute);
 app.use('/reviews', reviewRoute);
