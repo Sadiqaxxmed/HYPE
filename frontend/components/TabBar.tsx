@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, StyleSheet, LayoutChangeEvent } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, LayoutChangeEvent, useColorScheme } from 'react-native';
 import {  useTheme } from '@react-navigation/native';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import Colors from '@/constants/Colors';
@@ -7,9 +7,12 @@ import TabBarButton from './TabBarButton';
 import { useState } from 'react';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
-export function TabBar({ state, descriptors, navigation } : BottomTabBarProps) {
-  const [dimensions, setDimensions] = useState({height: 20, width: 100});
 
+export function TabBar({ state, descriptors, navigation } : BottomTabBarProps) {
+
+  const colorScheme = useColorScheme();
+  const themeContainerStyle = colorScheme === 'light' ? Colors.light.background : Colors.dark.darkGrey;
+  const [dimensions, setDimensions] = useState({height: 20, width: 100});
   const buttonWidth = dimensions.width / state.routes.length;
 
   const onTabbarLayout = (e: LayoutChangeEvent) => {
@@ -20,7 +23,7 @@ export function TabBar({ state, descriptors, navigation } : BottomTabBarProps) {
   }
 
   const tabPositionX = useSharedValue(0);
-
+  
   const animatedStyle = useAnimatedStyle(() =>  {
     return {
       transform: [{translateX: tabPositionX.value}]
@@ -28,7 +31,7 @@ export function TabBar({ state, descriptors, navigation } : BottomTabBarProps) {
   })
 
   return (
-    <View onLayout={onTabbarLayout} style={styles.tabbar}>
+    <View onLayout={onTabbarLayout} style={[styles.tabbar, { backgroundColor: themeContainerStyle }]}  >
       <Animated.View style={[animatedStyle, {
         position: 'absolute',
         backgroundColor: Colors.dark.hypeColor,
@@ -37,7 +40,7 @@ export function TabBar({ state, descriptors, navigation } : BottomTabBarProps) {
         height: dimensions.height - 15,
         width: buttonWidth - 25
       }]} 
-       />
+      />
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const label =
@@ -93,7 +96,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginHorizontal: 5,
-    backgroundColor: Colors.dark.darkGrey,
+    backgroundColor: Colors.light.background,
     paddingVertical: 12,
     borderRadius: 20,
     shadowColor: '#000',

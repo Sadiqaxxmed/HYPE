@@ -49,6 +49,7 @@ const TabBarButton = ({
                 opacity
             }
         })
+        
     return (
         <Pressable
             onPress={onPress}
