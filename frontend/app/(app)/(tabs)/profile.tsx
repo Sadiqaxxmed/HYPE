@@ -1,10 +1,14 @@
-import { StyleSheet } from 'react-native';
+import { Button, StyleSheet } from 'react-native';
 import { Text, View } from '@/components/Themed';
+import { useAuth } from '@/context/auth';
 
 export default function ProfileScreen() {
+  const { signOut } = useAuth();
+
   return (
     <View style={styles.container}>
       <Text>Profile Screen</Text>
+      <Button title="Log out" onPress={signOut} />
     </View>
   );
 }
