@@ -13,6 +13,7 @@ passport.use(new LocalStrategy({
   try {
     const user = await User.findOne({ email });
     if (!user) {
+      console.log('No user found with email:', email); // Add this for debugging
       return done(null, false, { message: 'Incorrect email.' });
     }
 
@@ -21,6 +22,7 @@ passport.use(new LocalStrategy({
     console.log('Password:', password);
     console.log('User from DB:', user);
     console.log('Password match:', isMatch);
+    console.log("PASSWORDS", password, user.password)
     if (!isMatch) {
       return done(null, false, { message: 'Incorrect password.' });
     }
@@ -31,30 +33,31 @@ passport.use(new LocalStrategy({
   }
 }));
 
-// Google OAuth strategy
-passport.use(new GoogleStrategy({
-  clientID: process.env.GOOGLE_CLIENT_ID,
-  callbackURL: '/auth/google/callback'
-}, async (accessToken, refreshToken, profile, done) => {
-  try {
-    let user = await User.findOne({ googleId: profile.id });
-
-    if (!user) {
-      user = new User({
-        username: profile.displayName,
-        email: profile.emails[0].value,
-        googleId: profile.id
-      });
-      await user.save();
-    }
-
-    done(null, user);
-  } catch (err) {
-    done(err, false);
-  }
-}));
-
 passport.serializeUser((user, done) => done(null, user.id));
 passport.deserializeUser((id, done) => {
   User.findById(id, (err, user) => done(err, user));
 });
+
+// // Google OAuth strategy
+// passport.use(new GoogleStrategy({
+//   clientID: process.env.GOOGLE_CLIENT_ID,
+//   callbackURL: '/auth/google/callback'
+// }, async (accessToken, refreshToken, profile, done) => {
+//   try {
+//     let user = await User.findOne({ googleId: profile.id });
+
+//     if (!user) {
+//       user = new User({
+//         username: profile.displayName,
+//         email: profile.emails[0].value,
+//         googleId: profile.id
+//       });
+//       await user.save();
+//     }
+
+//     done(null, user);
+//   } catch (err) {
+//     done(err, false);
+//   }
+// }));
+

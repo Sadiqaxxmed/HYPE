@@ -8,6 +8,8 @@ import 'react-native-reanimated';
 
 import { useColorScheme } from '@/components/useColorScheme';
 import { AuthProvider } from '@/context/auth';
+import { Provider } from 'react-redux';
+import store from '@/store';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -51,11 +53,13 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
   return (
+    <Provider store={store}>
     <AuthProvider>
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Slot />
     </ThemeProvider>
     </AuthProvider>
+    </Provider>
   );
 }
 

@@ -5,7 +5,7 @@ const OutfitPiece = require('../models/outfitPiece');
 const authenticateJWT = require('../middleware/auth');
 
 // Get all outfits
-router.get('/', authenticateJWT, async (req, res) => {
+router.get('/', async (req, res) => {
   const outfits = await Outfit.find();
   res.send(outfits);
 });

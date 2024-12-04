@@ -25,7 +25,7 @@ export default function LoginScreen() {
         onChangeText={setPassword}
       />
       <Text style={styles.forgotPasswordButtonText}>Forgot your password?</Text>
-      <Pressable style={styles.button} onPress={signIn}>
+      <Pressable style={styles.button} onPress={() => signIn(email, password)}>
         <Text style={styles.buttonText}> Login </Text>  
       </Pressable> 
     </View>

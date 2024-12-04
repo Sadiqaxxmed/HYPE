@@ -39,45 +39,70 @@ router.post('/signup', async (req, res) => {
 });
 
 // Standard login route
-router.post('/login', (req, res, next) => {
-  passport.authenticate('local', (err, user, info) => {
-    if (err) return next(err);
-    if (!user) return res.status(401).json(info);
-
-    const token = generateToken(user);
-    res.json({ token });
-  })(req, res, next);
-});
-
-// Google OAuth login route
-router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-
-// Phone verification route
-router.post('/phone/verify', async (req, res) => {
-  const { phoneNumber } = req.body;
-  await sendVerificationCode(phoneNumber);
-  res.status(200).send('Verification code sent');
-});
-
-router.post('/phone/confirm', async (req, res) => {
-  const { phoneNumber, code } = req.body;
-  const verification = await verifyCode(phoneNumber, code);
-
-  if (verification.status === 'approved') {
-    let user = await User.findOne({ phoneNumber });
+router.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    // Find user by email
+    const user = await User.findOne({ email });
     if (!user) {
-      user = new User({ phoneNumber, phoneVerified: true });
-      await user.save();
-    } else {
-      user.phoneVerified = true;
-      await user.save();
+      return res.status(401).json({ message: 'Invalid email or password.' });
     }
 
+    // Check if password matches
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Invalid email or password.' });
+    }
+
+    // Generate JWT token
     const token = generateToken(user);
-    res.json({ token });
-  } else {
-    res.status(400).send('Invalid code');
+
+    // Return token and user details
+    res.status(200).json({
+      token,
+      user: {
+        _id: user._id,
+        email: user.email,
+        username: user.username,
+        profile_pic: user.profile_pic, // Optional, depending on your user model
+        bio: user.bio, // Optional, depending on your user model
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error.' });
   }
 });
+
+
+// Google OAuth login route
+// router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+// // Phone verification route
+// router.post('/phone/verify', async (req, res) => {
+//   const { phoneNumber } = req.body;
+//   await sendVerificationCode(phoneNumber);
+//   res.status(200).send('Verification code sent');
+// });
+
+// router.post('/phone/confirm', async (req, res) => {
+//   const { phoneNumber, code } = req.body;
+//   const verification = await verifyCode(phoneNumber, code);
+
+//   if (verification.status === 'approved') {
+//     let user = await User.findOne({ phoneNumber });
+//     if (!user) {
+//       user = new User({ phoneNumber, phoneVerified: true });
+//       await user.save();
+//     } else {
+//       user.phoneVerified = true;
+//       await user.save();
+//     }
+
+//     const token = generateToken(user);
+//     res.json({ token });
+//   } else {
+//     res.status(400).send('Invalid code');
+//   }
+// });
 
 module.exports = router;
