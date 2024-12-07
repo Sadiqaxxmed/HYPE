@@ -4,6 +4,7 @@ const passport = require('passport');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const generateToken = require('../utils/jwt');
+const { authenticateToken } = require('../middleware/auth'); // Middleware to verify token
 const { sendVerificationCode, verifyCode } = require('../utils/twilio');
 
 // User Signup route
@@ -29,7 +30,6 @@ router.post('/signup', async (req, res) => {
 
     await newUser.save();
 
-    // Generate a token (optional)
     const token = generateToken(newUser);
 
     res.status(201).json({ token, user: newUser });
@@ -64,8 +64,8 @@ router.post('/login', async (req, res) => {
         _id: user._id,
         email: user.email,
         username: user.username,
-        profile_pic: user.profile_pic, // Optional, depending on your user model
-        bio: user.bio, // Optional, depending on your user model
+        profile_pic: user.profile_pic, 
+        bio: user.bio, 
       }
     });
   } catch (error) {
@@ -73,36 +73,24 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// Route to get all users
+router.get('/users', async (req, res) => {
+  try {
+    const users = await User.find().select('-password'); 
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error.' });
+  }
+});
 
-// Google OAuth login route
-// router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-
-// // Phone verification route
-// router.post('/phone/verify', async (req, res) => {
-//   const { phoneNumber } = req.body;
-//   await sendVerificationCode(phoneNumber);
-//   res.status(200).send('Verification code sent');
-// });
-
-// router.post('/phone/confirm', async (req, res) => {
-//   const { phoneNumber, code } = req.body;
-//   const verification = await verifyCode(phoneNumber, code);
-
-//   if (verification.status === 'approved') {
-//     let user = await User.findOne({ phoneNumber });
-//     if (!user) {
-//       user = new User({ phoneNumber, phoneVerified: true });
-//       await user.save();
-//     } else {
-//       user.phoneVerified = true;
-//       await user.save();
-//     }
-
-//     const token = generateToken(user);
-//     res.json({ token });
-//   } else {
-//     res.status(400).send('Invalid code');
-//   }
-// });
+// Route to get current user
+router.get('/current', async (req, res) => {
+  try {
+    const user = req.user;
+    res.json({ user });
+  } catch (err) {
+    res.status(500).json({ errors: ['Failed to fetch current user'] });
+  }
+});
 
 module.exports = router;

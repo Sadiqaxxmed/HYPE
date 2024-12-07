@@ -1,13 +1,13 @@
-// src/store/index.ts
-
 import { configureStore } from '@reduxjs/toolkit';
 import sessionReducer from './session';
+import outfitReducer from './outfit';
+
 
 const store = configureStore({
     reducer: {
         session: sessionReducer,
+        outfit: outfitReducer
     },
-    // You can customize the middleware setup if needed
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(),
 });
