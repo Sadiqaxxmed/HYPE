@@ -6,13 +6,13 @@ import { fetchOutfits } from '@/store/outfit';
 import { fetchCurrentUser, getAllUsers } from '@/store/session';
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '@/constants/Colors';
-
+import { fetchReviews } from '@/store/reviews';
 
 export default function FeedScreen() {
-
   const dispatch = useDispatch<AppDispatch>();
   const { outfits, status: outfitStatus, error: outfitError } = useSelector((state: RootState) => state.outfit);
   const { user: currentUser, users, status: userStatus, error: userError } = useSelector((state: RootState) => state.session);
+  const { reviews, status: reviewStatus, error: reviewError } = useSelector((state: RootState) => state.review)
 
   useEffect(() => {
     if (outfitStatus === 'idle') {
@@ -22,7 +22,10 @@ export default function FeedScreen() {
       dispatch(fetchCurrentUser());
       dispatch(getAllUsers());
     }
-  }, [dispatch, outfitStatus, userStatus]);
+    if (reviewStatus === 'idle') {
+      dispatch(fetchReviews());
+    }
+  }, [dispatch, outfitStatus, userStatus, reviewStatus]);
 
     const formatDate = (dateString: string) => {
       const options: Intl.DateTimeFormatOptions = {
@@ -36,7 +39,6 @@ export default function FeedScreen() {
 
   return (
     <View style={{}}>
-
       <View style={navStyle.nav}>
         <View style={{ backgroundColor: 'transparent', height: 30, marginLeft: 20, marginTop: 15}}>
             <Ionicons name="search-outline" size={25} color={'white'} />
@@ -58,9 +60,15 @@ export default function FeedScreen() {
           Object.keys(outfits).map(key => {
             const outfit = outfits[key];
             const userOutfis = users[outfit.user_id]; 
-
+            const outfitReviews = reviews[outfit._id] || {};
+            const totalRating = Object.values(outfitReviews).reduce((sum, review) => sum + review.rating, 0);
+            
             return (
               <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginBottom: 0 }} key={key}>
+                <View style={{ gap: 3, zIndex: '1', top: "10%", left: '25%', flexDirection: 'row', alignItems: 'center'}}>
+                  <Text style={{ color: 'white', fontSize: 27, fontWeight: '700', marginLeft: 5 }}>{totalRating}</Text>
+                  <Ionicons name="star" size={30} color={'white'} />
+                </View>
                 {outfit.images && outfit.images.length > 0 && (
                   <Image
                     style={{ height: 500, width: 380, borderRadius: 20 }}
@@ -68,8 +76,7 @@ export default function FeedScreen() {
                   />
                 )}
                 <View style={postCardStyle.postCard}>
-                  {userOutfis && (
-                    <>
+                  {userOutfis && reviews && (
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-evenly', alignContent: 'center'}}>
                       <View style={{flex: 1, flexDirection: 'row' }}>
                         <View style={{paddingTop: 10, paddingLeft: 10}}>
@@ -84,7 +91,6 @@ export default function FeedScreen() {
                         <Ionicons name="star-outline" size={40} color={'white'}/>
                       </View>
                     </View>
-                    </>
                   )} 
                 </View>
               </View>

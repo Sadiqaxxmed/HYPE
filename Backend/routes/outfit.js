@@ -7,7 +7,6 @@ const authenticateJWT = require('../middleware/auth');
 // Get all outfits
 router.get('/', async (req, res) => {
   const outfits = await Outfit.find();
-  console.log("Backend outfit", outfits)
   res.send(outfits);
 });
 

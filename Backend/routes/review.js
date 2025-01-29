@@ -4,19 +4,20 @@ const Review = require('../models/review');
 const authenticateJWT = require('../middleware/auth');
 
 // Get all reviews
-router.get('/', authenticateJWT, async (req, res) => {
+router.get('/', async (req, res) => {
     const reviews = await Review.find();
     res.send(reviews);
 });
 
 // Get a single review by ID
-router.get('/:id', authenticateJWT, async (req, res) => {
+router.get('/:id', async (req, res) => {
     const review = await Review.findById(req.params.id);
     if (!review) {
         return res.status(404).send();
     }
     res.send(review);
 });
+
 // Create a new review
 router.post('/', authenticateJWT, async (req, res) => {
     const newReview = new Review(req.body);

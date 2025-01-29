@@ -60,6 +60,9 @@ export const fetchCurrentUser = createAsyncThunk(
             },
         });
 
+        console.log("TOKEN:", token)
+        console.log("RESPONSE:", response.ok)
+
 
         if (response.ok) {
             const data = await response.json();
